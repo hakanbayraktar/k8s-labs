@@ -1,0 +1,68 @@
+# Kind cluster sözleşmesi: Edge Nginx host 80/443'ün sahibidir; Kind bu portlara bağlanmaz.
+# Node imajı sabittir; herkes aynı Kubernetes sürümüyle çalışır (kind v0.33.0 ile uyumlu).
+kind: Cluster
+apiVersion: kind.x-k8s.io/v1alpha4
+name: k8s-labs
+nodes:
+  - role: control-plane
+    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+    kubeadmConfigPatches:
+      - |
+        kind: InitConfiguration
+        nodeRegistration:
+          kubeletExtraArgs:
+            node-labels: "ingress-ready=true"
+    extraPortMappings:
+      # app1/app2/app3: Edge Nginx bu host portlarına proxy yapar; Ingress Controller burada dinler.
+      - containerPort: 80
+        hostPort: 19001
+        listenAddress: "0.0.0.0"
+        protocol: TCP
+      - containerPort: 80
+        hostPort: 19002
+        listenAddress: "0.0.0.0"
+        protocol: TCP
+      - containerPort: 80
+        hostPort: 19003
+        listenAddress: "0.0.0.0"
+        protocol: TCP
+      # Lablara ayrılmış NodePort portları.
+      - containerPort: 30086
+        hostPort: 30086
+        listenAddress: "0.0.0.0"
+        protocol: TCP
+      - containerPort: 30087
+        hostPort: 30087
+        listenAddress: "0.0.0.0"
+        protocol: TCP
+      - containerPort: 30088
+        hostPort: 30088
+        listenAddress: "0.0.0.0"
+        protocol: TCP
+      # Arayüzler: Edge Nginx bu loopback portlarına proxy yapar (port-forward gerekmez).
+      - containerPort: 30084   # Headlamp
+        hostPort: 18084
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30089   # Grafana
+        hostPort: 13000
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+      - containerPort: 30090   # Prometheus
+        hostPort: 19090
+        listenAddress: "127.0.0.1"
+        protocol: TCP
+    extraMounts:
+      # Static hostPath PV için kontrollü host dizini.
+      - hostPath: /opt/k8s-labs/static-pv
+        containerPath: /mnt/k8s-labs/static-pv
+  - role: worker
+    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+    extraMounts:
+      - hostPath: /opt/k8s-labs/static-pv
+        containerPath: /mnt/k8s-labs/static-pv
+  - role: worker
+    image: kindest/node:v1.37.0@sha256:a1ed56cfb0e7b93589bdf97c8cd566405a265939e3620fc4f5de89adff580ae5
+    extraMounts:
+      - hostPath: /opt/k8s-labs/static-pv
+        containerPath: /mnt/k8s-labs/static-pv

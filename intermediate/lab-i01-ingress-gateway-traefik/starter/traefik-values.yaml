@@ -1,0 +1,38 @@
+# Traefik, Kind control-plane node'unda calisir ve node'un 80 portunu dinler.
+# kind-cluster.yaml bu portu sunucunun 19001/19002/19003 portlarina esler.
+deployment:
+  replicas: 1
+# hostPort ayni node'da iki Pod'a verilemez: guncellemede once eski Pod kapanir.
+updateStrategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxUnavailable: 1
+    maxSurge: 0
+nodeSelector:
+  ingress-ready: "true"
+tolerations:
+  - key: node-role.kubernetes.io/control-plane
+    operator: Exists
+    effect: NoSchedule
+ports:
+  web:
+    port: 8000
+    hostPort: 80
+  websecure:
+    expose:
+      default: false
+service:
+  spec:
+    type: ClusterIP     # Disaridan erisim hostPort ile; LoadBalancer gerekmez
+ingressClass:
+  enabled: true
+  isDefaultClass: true
+providers:
+  kubernetesIngress:
+    enabled: true       # Ingress kurallarini okur
+  kubernetesGateway:
+    enabled: true       # Gateway API kurallarini okur (GatewayClass "traefik")
+gateway:
+  enabled: false        # Gateway nesnesini uygulama ekibi kendi namespace'inde tanimlar
+gatewayClass:
+  enabled: true

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: load-generator
+spec:
+  containers:
+    - name: load
+      image: busybox:1.37
+      # /work?ms=200 her istekte 200 ms CPU harcar. Dort paralel dongu yuk uretir.
+      command: ["sh", "-c", "for n in 1 2 3 4; do (while true; do wget -qO- http://devops-app/work?ms=200 >/dev/null 2>&1; done) & done; wait"]

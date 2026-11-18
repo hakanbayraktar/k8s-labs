@@ -1,0 +1,19 @@
+.env
+*.local.yaml
+secrets.local.yaml
+.DS_Store
+node_modules/
+coverage/
+k8s.pptx
+/plan.html
+
+# AI & Agent internal files
+.agents/
+.codex/
+AGENTS.md
+
+# Lablarin calisma sirasinda urettigi dosyalar
+work/
+*.tgz
+advanced/lab-a01-helm-wordpress/chart/
+intermediate/lab-i02-deployment-strategies/*.log

@@ -1,0 +1,44 @@
+grafana:
+  admin:
+    existingSecret: grafana-admin
+    userKey: admin-user
+    passwordKey: admin-password
+  service:
+    type: NodePort
+    nodePort: 30089          # kind-cluster.yaml: sunucuda 127.0.0.1:13000
+  sidecar:
+    dashboards:
+      enabled: true
+      label: grafana_dashboard   # bu etiketi tasiyan ConfigMap'ler pano olarak yuklenir
+      searchNamespace: ALL
+
+prometheus:
+  service:
+    type: NodePort
+    nodePort: 30090          # kind-cluster.yaml: sunucuda 127.0.0.1:19090
+  prometheusSpec:
+    retention: 2d
+    # Tum namespace'lerdeki ServiceMonitor ve PrometheusRule nesnelerini oku
+    serviceMonitorSelectorNilUsesHelmValues: false
+    serviceMonitorNamespaceSelector: {}
+    ruleSelectorNilUsesHelmValues: false
+    ruleNamespaceSelector: {}
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          storageClassName: standard
+          accessModes: [ReadWriteOnce]
+          resources:
+            requests:
+              storage: 2Gi
+
+# Kind'de bu bilesenler yalnizca node icinden erisilebilir adreste dinler; hedef listesinde
+# hata gostermemeleri icin izlenmez.
+kubeControllerManager:
+  enabled: false
+kubeScheduler:
+  enabled: false
+kubeEtcd:
+  enabled: false
+kubeProxy:
+  enabled: false

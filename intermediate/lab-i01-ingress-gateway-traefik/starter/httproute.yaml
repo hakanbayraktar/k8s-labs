@@ -1,0 +1,25 @@
+# Uygulama ekibi: hangi alan adi ve yolun hangi Service'e gidecegi.
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: web
+spec:
+  parentRefs:
+    - name: web-gateway
+  hostnames:
+    - __ROUTE_HOST__
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /echo
+      backendRefs:
+        - name: echo
+          port: 80
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: web
+          port: 80

@@ -1,0 +1,29 @@
+# Statik PV: yonetici diski onceden tanimlar. Bu PV, Kind node'larina baglanan
+# /mnt/k8s-labs/static-pv dizinini (sunucuda /opt/k8s-labs/static-pv) kullanir.
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: b08-static-pv
+spec:
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteOnce
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: ""
+  hostPath:
+    path: /mnt/k8s-labs/static-pv
+    type: Directory
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: static-pvc
+spec:
+  storageClassName: ""
+  volumeName: b08-static-pv
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

@@ -1,0 +1,9 @@
+# Ikinci surum: Pod'lara etiket ekle ve kaynak ayarini degistir.
+podLabels:
+  surum: v2
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: static-writer
+spec:
+  restartPolicy: Never
+  containers:
+    - name: writer
+      image: busybox:1.37
+      command: ["sh", "-c", "echo \"b08 statik disk: $(date)\" > /data/b08-message.txt; cat /data/b08-message.txt"]
+      volumeMounts:
+        - name: data
+          mountPath: /data
+  volumes:
+    - name: data
+      persistentVolumeClaim:
+        claimName: static-pvc

@@ -1,0 +1,24 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: devops-app-alerts
+spec:
+  groups:
+    - name: devops-app
+      rules:
+        - alert: DevopsAppDown
+          expr: absent(up{job="devops-app"} == 1)
+          for: 30s
+          labels:
+            severity: critical
+          annotations:
+            summary: "devops-app metrik vermiyor"
+            description: "30 saniyedir hicbir devops-app Pod'una ulasilamiyor."
+        - alert: PodRestartingFrequently
+          expr: increase(kube_pod_container_status_restarts_total[10m]) > 3
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Pod sik yeniden basliyor"
+            description: "{{ $labels.namespace }}/{{ $labels.pod }} son 10 dakikada 3'ten fazla yeniden basladi."

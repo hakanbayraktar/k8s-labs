@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: root-image
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+    - name: web
+      image: nginx:1.30-alpine        # imaj varsayilan olarak root ile calisir

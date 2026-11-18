@@ -1,0 +1,8 @@
+{
+  "name": "notes-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Kubernetes capstone icin MySQL kullanan basit not defteri",
+  "scripts": { "start": "node server.js" },
+  "dependencies": { "express": "4.21.2", "mysql2": "3.11.5" }
+}

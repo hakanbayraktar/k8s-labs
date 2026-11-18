@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: writer
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: writer
+  template:
+    metadata:
+      labels:
+        app: writer
+    spec:
+      affinity:
+        podAntiAffinity:            # iki kopya farkli node'larda calisir
+          requiredDuringSchedulingIgnoredDuringExecution:
+            - labelSelector:
+                matchLabels:
+                  app: writer
+              topologyKey: kubernetes.io/hostname
+      containers:
+        - name: writer
+          image: busybox:1.37
+          env:
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          # Her yazici kendi node'unun adiyla bir dosyaya yazar. Ayni dosyaya iki node'dan
+          # ayni anda ekleme yapmak NFS'te guvenli degildir.
+          command: ["sh", "-c", "while true; do echo \"$(date +%T) $(hostname)\" >> /data/$NODE_NAME.log; sleep 3; done"]
+          volumeMounts:
+            - name: shared
+              mountPath: /data
+      volumes:
+        - name: shared
+          persistentVolumeClaim:
+            claimName: shared

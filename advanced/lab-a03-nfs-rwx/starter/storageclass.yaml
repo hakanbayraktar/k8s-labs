@@ -1,0 +1,13 @@
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: nfs-rwx
+provisioner: nfs.csi.k8s.io        # PVC acilinca NFS paylasiminda alt dizin olusturur
+parameters:
+  server: nfs-server.nfs-server.svc.cluster.local
+  share: /
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+mountOptions:
+  - nfsvers=4.1
+  - actimeo=3        # dosya ve dizin bilgisini en fazla 3 sn onbellekte tut

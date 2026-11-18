@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: oom-demo
+spec:
+  restartPolicy: Never
+  containers:
+    - name: app
+      image: busybox:1.37
+      # Uygulama acilista 100 MB onbellek hazirlar. Bellek tabanli diske yazilan veri
+      # container'in bellek kullanimina sayilir.
+      command: ["sh", "-c", "echo 'onbellek hazirlaniyor'; dd if=/dev/zero of=/cache/data bs=1M count=100; echo 'hazir'; sleep 3600"]
+      resources:
+        requests:
+          memory: 32Mi
+        limits:
+          memory: 32Mi
+      volumeMounts:
+        - name: cache
+          mountPath: /cache
+  volumes:
+    - name: cache
+      emptyDir:
+        medium: Memory
+        sizeLimit: 200Mi

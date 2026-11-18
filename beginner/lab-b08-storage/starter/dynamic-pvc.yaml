@@ -1,0 +1,12 @@
+# Dinamik PVC: PV'yi StorageClass'in provisioner'i otomatik olusturur.
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: app-data
+spec:
+  storageClassName: standard
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

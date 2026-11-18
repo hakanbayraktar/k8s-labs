@@ -1,0 +1,21 @@
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: devops-app
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: devops-app
+  minReplicas: 1
+  maxReplicas: 5
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 50   # Pod basina ortalama CPU, request'in %50'si
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 30   # Varsayilan 300 sn; labda kuculmeyi hizli gormek icin

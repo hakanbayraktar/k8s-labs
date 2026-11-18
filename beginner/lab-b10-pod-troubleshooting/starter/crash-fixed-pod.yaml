@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: crash-demo
+spec:
+  containers:
+    - name: app
+      image: busybox:1.37
+      env:
+        - name: DB_HOST
+          value: "mysql-0.mysql-headless"
+      command:
+        - sh
+        - -c
+        - |
+          echo "Uygulama basliyor"
+          if [ -z "$DB_HOST" ]; then echo "HATA: DB_HOST tanimli degil"; exit 1; fi
+          echo "Veritabani: $DB_HOST"; while true; do sleep 30; done

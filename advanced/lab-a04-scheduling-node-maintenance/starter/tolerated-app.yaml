@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tolerated-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: tolerated-app }
+  template:
+    metadata:
+      labels: { app: tolerated-app }
+    spec:
+      nodeSelector:
+        disk: ssd
+      tolerations:                # "dedicated=egitim:NoSchedule" taint'ini kabul eder
+        - key: dedicated
+          operator: Equal
+          value: egitim
+          effect: NoSchedule
+      containers:
+        - name: web
+          image: nginx:1.30-alpine
+          resources:
+            requests: { cpu: 25m, memory: 16Mi }

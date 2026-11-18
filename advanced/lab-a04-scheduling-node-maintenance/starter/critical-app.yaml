@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: critical-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: critical-app }
+  template:
+    metadata:
+      labels: { app: critical-app }
+    spec:
+      containers:
+        - name: web
+          image: nginx:1.30-alpine
+          resources:
+            requests: { cpu: 25m, memory: 16Mi }
+---
+# Gonullu kesintilerde (drain gibi) en az 1 kopya calisir kalmali
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: critical-app
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: { app: critical-app }
